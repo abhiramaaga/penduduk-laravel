@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link } from '@inertiajs/react';
+import { Link ,usePage} from '@inertiajs/react';
 import GenderPieChart from "./GenderPieChart.jsx";
 import KabupatenChart from "./KabupatenChart.jsx"; // Impor komponen chart baru
 
 function App() {
+  const { auth } = usePage().props;
   return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -14,8 +15,12 @@ function App() {
           <a href="#" style={styles.navLink}>Berita</a>
           <a href="#" style={styles.navLink}>Program</a>
           <button style={styles.loginButton}>
-            <Link href={route('login')}>login</Link>
-          </button>
+          {auth.user ? (
+            <Link href={route('penduduk.index')}>Ke Dashboard</Link> 
+          ) : (
+            <Link href={route('login')}>Login</Link>
+          )}
+      </button>
         </nav>
       </header>
       <main style={styles.mainContent}>
