@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
 import Tampilan from '@/Components/Tampilan';
 import Kelola from '@/Components/Kelola';
+import Index from './Penduduk/Index';
+import { Link, usePage,router } from '@inertiajs/react';
+import Create from './Penduduk/Create';
 
-function App() {
+function Dashboard() {
   const [activeMenu, setActiveMenu] = useState('dashboard');
+  const {penduduk} = usePage().props
+  console.log("ini penduduk", penduduk);
 
   const handleMenuClick = (menu) => {
     setActiveMenu(menu);
   };
 
   const handleLogout = () => {
-    // Log out the user and redirect to the home page or login page
-    window.location.href = '/'; // Ganti '/' dengan URL halaman awal yang diinginkan
+    router.post('/logout', {}, {
+      onFinish: () => {
+        // Redirect ke halaman login setelah logout selesai
+        window.location.href = '/';
+      },
+    });
   };
 
   return (
@@ -65,13 +74,14 @@ function App() {
 
         {/* Conditional Content */}
         {activeMenu === 'dashboard' ? (
-          <Tampilan />
+          <Index />
         ) : (
-          <Kelola />
+          // <Link href="dashboard/penduduk/create">Tambah Penduduk</Link>
+          <Create />
         )}
       </div>
     </div>
   );
 }
 
-export default App;
+export default Dashboard;
