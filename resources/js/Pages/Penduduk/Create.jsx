@@ -17,6 +17,8 @@ function Create() {
     status: '',
   });
 
+  const [errorMessages, setErrorMessages] = useState('');
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -27,10 +29,26 @@ function Create() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Cek apakah semua field terisi
+    const emptyFields = Object.keys(formData).filter((key) => formData[key] === '');
+    if (emptyFields.length > 0) {
+      setErrorMessages('Semua data harus diisi.');
+      return;
+    }
+
+    // Validasi NIK: Harus 16 karakter dan tidak boleh mengandung huruf
+    const nikRegex = /^[0-9]{16}$/;
+    if (!nikRegex.test(formData.nik)) {
+      setErrorMessages('NIK harus terdiri dari 16 angka dan tidak boleh mengandung huruf.');
+      return;
+    }
+
+    // Jika validasi berhasil, kirim data ke server
+    setErrorMessages('');
     console.log(formData);
     router.post('/penduduk', formData, {
       onSuccess: () => {
-        // Setelah berhasil, lakukan redirect ke halaman penduduk
         router.visit('/penduduk');
       },
       onError: (errors) => {
@@ -45,6 +63,14 @@ function Create() {
         <div className="w-4/5 mx-auto bg-gray-100 p-8">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-blue-600 text-2xl font-semibold mb-6">Tambah Data Penduduk</h2>
+            
+            {/* Menampilkan pesan error jika ada */}
+            {errorMessages && (
+              <div className="bg-red-100 text-red-700 p-4 mb-4 rounded-md">
+                {errorMessages}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* NIK Field */}
               <div>
@@ -176,7 +202,7 @@ function Create() {
                 </div>
               </div>
 
-              {/* alamat */}
+              {/* Alamat */}
               <div>
                 <label className="block text-gray-700" htmlFor="alamat">Alamat:</label>
                 <input
